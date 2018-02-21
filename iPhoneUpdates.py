@@ -24,30 +24,31 @@ models = [
             'iphone9,1',  # iPhone 7
             'iphone9,2',  # iPhone 7+
             'iphone10,4', # iPhone 8
-            'iphone10,5'  # iPhone 8+
+            'iphone10,5', # iPhone 8+
+            'iphone10,6'  # iPhone X
         ]
 
 #Download latest firmware
 def downloadFile():
     with open(file_name, "wb") as f:
-            print "Downloading %s" % file_name
-            response = requests.get(link, stream=True)
-            total_length = response.headers.get('content-length')
+	    print "Downloading %s" % file_name
+	    response = requests.get(link, stream=True)
+	    total_length = response.headers.get('content-length')
 
-            if total_length is None: # no content length header
-                f.write(response.content)
-            else:
-                dl = 0
-                total_length = int(total_length)
-                for data in response.iter_content(chunk_size=4096):
-                    dl += len(data)
-                    f.write(data)
-                    done = int(50 * dl / total_length)
-                    sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )    
-                    sys.stdout.flush()
+	    if total_length is None: # no content length header
+		f.write(response.content)
+	    else:
+		dl = 0
+		total_length = int(total_length)
+		for data in response.iter_content(chunk_size=4096):
+		    dl += len(data)
+		    f.write(data)
+		    done = int(50 * dl / total_length)
+		    sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )    
+		    sys.stdout.flush()
 
 #For every model, check for latest firmware
-for elem in models:
+for elem in reversed(models):
     url = 'http://api.ipsw.me/v2.1/' + elem + '/latest/url'
     sizeURL = 'http://api.ipsw.me/v2.1/' + elem + '/latest/filesize'
     r = requests.get(url)
